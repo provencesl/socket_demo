@@ -1,0 +1,47 @@
+// Decompiled by DJ v3.12.12.101 Copyright 2016 Atanas Neshkov  Date: 2018/5/13 9:08:23
+// Home Page:  http://www.neshkov.com/dj.html - Check often for new version!
+// Decompiler options: packimports(3) 
+// Source File Name:   Server.java
+
+package aio;
+
+import java.io.PrintStream;
+import java.net.InetSocketAddress;
+import java.nio.channels.AsynchronousChannelGroup;
+import java.nio.channels.AsynchronousServerSocketChannel;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+
+// Referenced classes of package aio:
+//            ServerCompletionHandler
+
+public class Server
+{
+
+    public Server(int port)
+    {
+        try
+        {
+            executorService = Executors.newCachedThreadPool();
+            threadGroup = AsynchronousChannelGroup.withCachedThreadPool(executorService, 1);
+            assc = AsynchronousServerSocketChannel.open();
+            assc.bind(new InetSocketAddress(port));
+            System.out.println((new StringBuilder("server start,port:")).append(port).toString());
+            assc.accept(this, new ServerCompletionHandler());
+            Thread.sleep(0x7fffffffL);
+        }
+        catch(Exception e)
+        {
+            e.printStackTrace();
+        }
+    }
+
+    public static void main(String args[])
+    {
+        Server server = new Server(8765);
+    }
+
+    private ExecutorService executorService;
+    private AsynchronousChannelGroup threadGroup;
+    public AsynchronousServerSocketChannel assc;
+}
